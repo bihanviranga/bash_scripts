@@ -1,0 +1,19 @@
+#!/bin/bash
+:'
+This script plays the playlist name provided as $1.
+If no playlist by that name is found in $PLAYLIST_ROOT,
+it plays the whole $PLAYLIST_ROOT directory.
+'
+
+# Constants
+PLAYLIST_ROOT="/mnt/b/music/"
+
+if [ -z "$1" ]
+then
+	echo "No playlist provided. Playing shuffle on repeat.."
+	vlc -L -R $PLAYLIST_ROOT &
+else
+	echo "Playing $1.."
+	vlc "$PLAYLIST_ROOT$1.xspf" &
+fi
+
