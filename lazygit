@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 
 git status
-git add .
-git commit -m "$@"
-git push origin HEAD
-
+echo "CONTINUE ?"
+read response
+if [ $response == "y" ] || [ $response == "Y" ]
+then
+	git add .
+	git commit -m "$@"
+	git push origin HEAD
+else
+	echo "Aborted."
+fi
 
