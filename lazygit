@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+git status
+git add .
+git commit -m "$@"
+git push origin HEAD
+
+

@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 : '
-This script plays the playlist name provided as $1.
+This script plays the playlist name provided as $1 in vlc.
 If no playlist by that name is found in $PLAYLIST_ROOT,
 it plays the whole $PLAYLIST_ROOT directory.
 '
