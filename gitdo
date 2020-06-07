@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 : '
-Usage : lazygit "commit message"
+Usage : gitdo "commit message"
 
 This script automates the git commands I use often.
 It displays the results of `git status` and asks whether to proceed.
@@ -21,8 +21,6 @@ then
 	echo -e "${GREEN}[+] Added.${RCOL}"
 	git commit -m "$@"
 	echo -e "${GREEN}[+] Commited.${RCOL}"
-	git push origin HEAD
-	echo -e "${GREEN}[+] Pushed.${RCOL}"
 else
 	echo -e "${RED}[x] Aborted.${RCOL}"
 fi

@@ -11,7 +11,7 @@ export PATH="$PATH:~/bin"
 
 $ cd ~
 $ mkdir bin
-$ ln -s bin/play ${repo_location}/play
+$ ln -s ${repo_location}/play ~/bin/play
 ```
 You might want to make the scripts executable first.
 `$ chmod u+x {script}`
