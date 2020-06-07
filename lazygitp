@@ -21,6 +21,8 @@ then
 	echo -e "${GREEN}[+] Added.${RCOL}"
 	git commit -m "$@"
 	echo -e "${GREEN}[+] Commited.${RCOL}"
+	git push origin HEAD
+	echo -e "${GREEN}[+] Pushed.${RCOL}"
 else
 	echo -e "${RED}[x] Aborted.${RCOL}"
 fi
