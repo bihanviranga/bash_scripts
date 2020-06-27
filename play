@@ -11,7 +11,7 @@ PLAYLIST_ROOT="/mnt/b/music/"
 # If no argument is given
 if [ -z "$1" ]
 then
-	echo "No argument provided. Playing shuffle.."
+	echo "No argument provided. Playing all on shuffle.."
 	vlc -Z $PLAYLIST_ROOT &
 # If a playlist with the given name exists
 elif [ -f "$PLAYLIST_ROOT$1.xspf" ]
@@ -42,6 +42,14 @@ else
 		unset IFS
 	else 
 		echo "Albums for keyword $1 found. Playing.."
+	fi
+
+	# If the cmdstr length is still 6, nothing was found. Just play everything.
+	cmdlen=${#cmdstr}
+	if [ "$cmdlen" -eq 6 ]
+	then
+		echo "Nothing found for keyword $1. Playing all on shuffle.."
+		cmdstr="$cmdstr $PLAYLIST_ROOT"
 	fi
 
 	eval "$cmdstr"
