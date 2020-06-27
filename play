@@ -8,12 +8,28 @@ it plays the whole $PLAYLIST_ROOT directory.
 # Constants
 PLAYLIST_ROOT="/mnt/b/music/"
 
+# If no argument is given
 if [ -z "$1" ]
 then
-	echo "No playlist provided. Playing shuffle on repeat.."
-	vlc -L $PLAYLIST_ROOT &
-else
-	echo "Playing $1.."
+	echo "No argument provided. Playing shuffle.."
+	vlc -Z $PLAYLIST_ROOT &
+# If a playlist with the given name exists
+elif [ -f "$PLAYLIST_ROOT$1.xspf" ]
+then
+	echo "Playing playlist $1.."
 	vlc "$PLAYLIST_ROOT$1.xspf" &
+# Otherwise, try the albums directory
+else
+	PLAYLIST_ROOT+="Albums"
+	cmdstr="vlc -Z"
+	IFS=$'\n'
+	
+	for filename in $(find $PLAYLIST_ROOT -maxdepth 1 -iname "*$1*");
+	do
+		cmdstr+=" '$filename'"
+	done
+	unset IFS
+	eval "$cmdstr"
 fi
 
+# NEXT: if no results find in the whole music directory.
