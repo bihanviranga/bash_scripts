@@ -2,7 +2,8 @@
 : '
 This script plays the playlist name provided as $1 in vlc.
 If no playlist by that name is found in $PLAYLIST_ROOT,
-it plays the whole $PLAYLIST_ROOT directory.
+it searches the Albums folder,
+and then the whole PLAYLIST_ROOT, and plays anything that contains the keyword.
 '
 
 # Constants
