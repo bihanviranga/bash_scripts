@@ -20,16 +20,30 @@ then
 	vlc "$PLAYLIST_ROOT$1.xspf" &
 # Otherwise, try the albums directory
 else
-	PLAYLIST_ROOT+="Albums"
 	cmdstr="vlc -Z"
 	IFS=$'\n'
-	
-	for filename in $(find $PLAYLIST_ROOT -maxdepth 1 -iname "*$1*");
+	for filename in $(find "$PLAYLIST_ROOT/Albums" -maxdepth 1 -iname "*$1*");
 	do
 		cmdstr+=" '$filename'"
 	done
 	unset IFS
+
+	# If cmdstr length is still equal to 6, it means no files have been found
+	# In this case, we search the entire music folder
+	cmdlen=${#cmdstr}
+	if [ "$cmdlen" -eq 6 ]
+	then
+		echo "No album with keyword $1 found. Searching master.."
+		IFS=$'\n'
+		for filename in $(find "$PLAYLIST_ROOT" -iname "*$1*");
+		do
+			cmdstr+=" '$filename'"
+		done
+		unset IFS
+	else 
+		echo "Albums for keyword $1 found. Playing.."
+	fi
+
 	eval "$cmdstr"
 fi
 
-# NEXT: if no results find in the whole music directory.
