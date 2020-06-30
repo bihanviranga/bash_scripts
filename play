@@ -53,6 +53,6 @@ else
 		cmdstr="$cmdstr $PLAYLIST_ROOT"
 	fi
 
-	eval "$cmdstr"
+	eval "$cmdstr &"
 fi
 
