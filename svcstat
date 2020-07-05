@@ -5,6 +5,9 @@ A simple script combining systemctl commands I use often.
 
 services=(httpd mysqld mssql-server docker)
 
+GREEN='\033[1;32m'
+RCOL='\033[0m'
+
 if [ -z "$1" ]
 then
 	for svc in "${services[@]}"
@@ -12,8 +15,21 @@ then
 		cmd="systemctl --no-pager status $svc"
 		result=$($cmd)
 		readarray -t lines <<<"$result"
-		echo "${lines[0]}"
-		echo "${lines[2]}"
+
+		activeline="${lines[2]}"
+		isactive=${activeline:13:6}
+		if [ "$isactive" = "active" ]
+		then
+			echo -e "${GREEN}${lines[0]}${RCOL}"
+			echo "${lines[2]}"
+		else
+			isinactive=${activeline:13:8}
+			if [ "$isinactive" = "inactive" ]
+			then
+				echo "${lines[0]}"
+				echo "${lines[2]}"
+			fi
+		fi
 	done
 elif [ "$1"="stopall" ]
 then
