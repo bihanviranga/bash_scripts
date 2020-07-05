@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 : '
-A simple combining systemctl commands I use often.
+A simple script combining systemctl commands I use often.
 '
 
 services=(httpd mysqld mssql-server docker)
@@ -10,6 +10,12 @@ then
 	for svc in "${services[@]}"
 	do
 		eval "systemctl --no-pager status $svc"
+	done
+elif [ "$1"="stopall" ]
+then
+	for svc in "${services[@]}"
+	do
+		eval "systemctl stop $svc"
 	done
 fi
 
