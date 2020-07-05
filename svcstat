@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+: '
+A simple combining systemctl commands I use often.
+'
+
+services=(httpd mysqld mssql-server docker)
+
+if [ -z "$1" ]
+then
+	for svc in "${services[@]}"
+	do
+		eval "systemctl --no-pager status $svc"
+	done
+fi
+
