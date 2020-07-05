@@ -9,7 +9,11 @@ if [ -z "$1" ]
 then
 	for svc in "${services[@]}"
 	do
-		eval "systemctl --no-pager status $svc"
+		cmd="systemctl --no-pager status $svc"
+		result=$($cmd)
+		readarray -t lines <<<"$result"
+		echo "${lines[0]}"
+		echo "${lines[2]}"
 	done
 elif [ "$1"="stopall" ]
 then
