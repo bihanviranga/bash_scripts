@@ -19,6 +19,11 @@ Usage: `svcstat [stopall]`
 
 Helps to monitor the status of services, specially when you start/stop them frequently. The services checked by the script are in an array, where you can add new services or remove them easily. When invoked with root permissions and the parameter 'stopall' (i.e `$ svcstat stopall`) all services in the array will be stopped.
 
+### copy
+Usage: copy (source) (destination)
+
+It just calls rsync. I use this when I want to copy something and see progress as well. As of now, this could have been done easier with an alias.
+
 ## My setup
 I prefer to store these in the `~/bin` directory. I have it added to path in `.bashrc`. Then I create symbolic links to the scripts.
 

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+: '
+Thin wrapper over rsync to show progress while copying.
+'
+
+if [ "$#" -lt 2 ]; then
+	echo "USAGE: $0 source... destination"
+else
+	rsync -ah --progress "$@"
+fi
+
+
