@@ -4,10 +4,12 @@ These are some simple bash scripts I created for personal use.
 
 ## Scripts
 
-### gitdo / gitdop
+<details>
+<summary>gitdo/gitdop</summary>
 Usage: `gitdo (commit message)`
 
 It's a simple script of git commands I use in order often. The script shows the results of git diff, and if input 'y' is given, it does `git add .` and commits with (commit message). If you used gitdop it also pushes to the current branch (HEAD).
+</details>
 
 ### play
 Usage: `play [keyword]`
