@@ -3,7 +3,7 @@
 A simple script combining systemctl commands I use often.
 '
 
-services=(httpd mysqld mssql-server docker)
+services=(httpd mysqld mssql-server docker tor)
 
 GREEN='\033[1;32m'
 RCOL='\033[0m'
