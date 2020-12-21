@@ -9,13 +9,13 @@ These are some simple bash scripts I created for personal use.
 
 Usage: `gitdo [options] <commit message>`
 
-It's a simple script of git commands I use in order often. The script shows the results of git diff, and if input 'y' is given, it does `git add .` and commits with (commit message). If you used gitdop it also pushes to the current branch (HEAD).
 A wrapper for frequently used git commands. When run, it shows the results of `git status` and adds, commits, and pushes automatically. Default behaviour can be customized. See `gitdo -h` for in-depth help.
+
 Example:
 ```bash
 # Add and commit all changes
 $ gitdo "Commit message here"
-# Add and commit without asking for confirmation
+# Add and commit without asking for confirmation (a stands for auto)
 $ gitdo -a "Commit message here"
 # Add, commit, and push without asking for confirmation
 $ gitdo -pa "Commit message here"
@@ -50,7 +50,7 @@ It just calls rsync. I use this when I want to copy something and see progress a
 </details>
 
 ## My setup
-I prefer to store these in the `~/bin` directory. I have it added to path in `.bashrc`. Then I create symbolic links to the scripts.
+Store the scripts wherever. I have the `~/bin` directory added to path. Then I create symbolic links to the scripts.
 
 ```bash
 # in ~/.bashrc
