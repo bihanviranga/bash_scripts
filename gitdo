@@ -8,6 +8,7 @@ On confirmation, it will continue to add, commit, and push to the current branch
 
 Inspired by the bashrc at https://github.com/daniruiz/dotfiles/blob/master/.bashrc
 '
+
 RED='\033[1;31m'
 GREEN='\033[1;32m'
 RCOL='\033[0m'
@@ -15,6 +16,7 @@ RCOL='\033[0m'
 AUTO_MODE=0
 COMMIT_OK=0
 PUSH_OK=0
+
 REMOTE="origin"
 
 function usage {
@@ -31,19 +33,21 @@ function print_verbose {
 	local message="${@}"
 	if [[ $VERBOSE -eq 1 ]];
 	then
-		echo "${message}"
+		echo -e "${message}"
 	fi
 }
 
 optstring=":hvapr:"
 
+# If no arguments are provided, exit.
 if [[ ${#} -eq 0 ]];
 then
-	echo "Error: No arguments supplied"
-	echo "Use $(basename $0) -h for usage instructions."
+	echo -e "${RED}[x] Error: No arguments supplied.${RCOL}" >&2
+	echo "Use $(basename $0) -h for usage instructions." >&2
 	exit 1
 fi
 
+# Parse arguments
 while getopts ${optstring} arg; do
 	case ${arg} in
 		h)
@@ -52,51 +56,47 @@ while getopts ${optstring} arg; do
 			;;
 		v)
 			VERBOSE=1
-			print_verbose "Verbose mode is on"
 			;;
 		p)
 			PUSH_OK=1
-			print_verbose "Will push commited changes."
 			;;
 		a)
 			AUTO_MODE=1
 			COMMIT_OK=1
-			print_verbose "Auto mode turned on."
 			;;
 		r)
 			if [ -n "${OPTARG}" ];
 			then
 				REMOTE=$OPTARG
 			fi
-			print_verbose "Remote set to ${REMOTE}"
 			;;
 		:)
-			echo "Error: No argument supplied to -${OPTARG}"
-			echo "Use $(basename $0) -h for usage instructions."
+			echo -e "${RED}[x] Error: No argument supplied to -${OPTARG}${RCOL}" >&2
+			echo "Use $(basename $0) -h for usage instructions." >&2
 			exit 1
 			;;
 		?)
-			echo "Error: Invalid option: -${OPTARG}" >&2
-			echo "Use $(basename $0) -h for usage instructions."
+			echo -e "${RED}[x] Error: Invalid option: -${OPTARG}${RCOL}" >&2
+			echo "Use $(basename $0) -h for usage instructions." >&2
 			exit 1
 			;;
 	esac
 done
 
+# If no commit message is given, exit.
 shift $((OPTIND-1))
 if [[ -z "$@" ]];
 then
-	echo "Error: No commit message provided."
-	echo "Use $(basename $0) -h for usage instructions."
+	echo -e "${RED}[x] Error: No commit message provided.${RCOL}" >&2
+	echo "Use $(basename $0) -h for usage instructions." >&2
 	exit 1
-else
-	print_verbose "Commit message: $@"
 fi
 
-echo "git status runs here"
+# Display git status
+git status
 
-# ask for confirmation
-# set commit and push OK flags
+# Ask for confirmation
+# Set commit and push OK flags
 if [[ $AUTO_MODE -ne 1 ]]
 then
 	echo -e "${GREEN}[*] Continue ?${RCOL}"
@@ -111,49 +111,28 @@ then
 	fi
 fi
 
-# if COMMIT_OK is 0, no use taking this any further
-# time to end things
+# if COMMIT_OK is 0, no use taking this any further.
+# Time to end things for good.
+# Farewell!
 if [[ $COMMIT_OK == 0 ]]
 then
-	echo "Aborting"
+	echo -e "${RED}[x] Aborted.${RCOL}"
 	exit 0
 fi
 
-# add and commit
+# Actually add and commit
 if [[ $AUTO_MODE == 1 ]] || [[ $COMMIT_OK == 1 ]]
 then
-	echo "Adding and committing"
+	git add .
+	print_verbose "${GREEN}[+] Added.${RCOL}"
+	git commit -m "$@"
+	print_verbose "${GREEN}[+] Committed.${RCOL}"
 fi
 
-# if asked to, push
+# If asked to, push
 if [[ $PUSH_OK == 1 ]]
 then
-	echo "Pushing"
+	git push ${REMOTE} HEAD
+	print_verbose "${GREEN}[+] Pushed.${RCOL}"
 fi
-
-#git status
-#echo -e "${GREEN}[*] Continue ?${RCOL}"
-#read response
-#if [ ${response:0:1} == "y" ] || [ ${response:0:1} == "Y" ]
-#then
-	#git add .
-	#echo -e "${GREEN}[+] Added.${RCOL}"
-	#git commit -m "$1"
-	#echo -e "${GREEN}[+] Commited.${RCOL}"
-	#if [ $response == "yp" ] || [ $response == "YP" ]
-	#then
-		##git push origin HEAD
-		#PUSHED=1
-		#echo -e "${GREEN}[+] Pushed.1${RCOL}"
-	#fi
-#else
-	#echo -e "${RED}[x] Aborted.${RCOL}"
-#fi
-
-#if [ -z "$1" ] && [ PUSHED -eq 0 ]
-#then
-	##git push origin HEAD
-	#PUSHED=1
-	#echo -e "${GREEN}[+] Pushed.2${RCOL}"
-#fi
 
