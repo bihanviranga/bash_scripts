@@ -12,7 +12,9 @@ RED='\033[1;31m'
 GREEN='\033[1;32m'
 RCOL='\033[0m'
 
-SHOULD_PUSH=0
+AUTO_MODE=0
+COMMIT_OK=0
+PUSH_OK=0
 REMOTE="origin"
 
 function usage {
@@ -20,6 +22,7 @@ function usage {
 	echo "$(basename $0) supports the following options:"
 	echo -e "\t-h\t\tDisplay this message and exit"
 	echo -e "\t-v\t\tEnable verbose mode"
+	echo -e "\t-a\t\tAuto-mode. Do not ask for confirmation after git status"
 	echo -e "\t-p\t\tPush changes to remote (default=origin)"
 	echo -e "\t-r <remote>\tSet remote to <remote>"
 }
@@ -32,12 +35,12 @@ function print_verbose {
 	fi
 }
 
-optstring=":hvpr:"
+optstring=":hvapr:"
 
 if [[ ${#} -eq 0 ]];
 then
 	echo "Error: No arguments supplied"
-	usage
+	echo "Use $(basename $0) -h for usage instructions."
 	exit 1
 fi
 
@@ -52,31 +55,81 @@ while getopts ${optstring} arg; do
 			print_verbose "Verbose mode is on"
 			;;
 		p)
-			SHOULD_PUSH=1
+			PUSH_OK=1
 			print_verbose "Will push commited changes."
+			;;
+		a)
+			AUTO_MODE=1
+			COMMIT_OK=1
+			print_verbose "Auto mode turned on."
 			;;
 		r)
 			if [ -n "${OPTARG}" ];
 			then
 				REMOTE=$OPTARG
 			fi
-			echo "Remote set to ${REMOTE}"
+			print_verbose "Remote set to ${REMOTE}"
+			;;
+		:)
+			echo "Error: No argument supplied to -${OPTARG}"
+			echo "Use $(basename $0) -h for usage instructions."
+			exit 1
 			;;
 		?)
-			echo "Invalid option: -${OPTARG}" >&2
+			echo "Error: Invalid option: -${OPTARG}" >&2
+			echo "Use $(basename $0) -h for usage instructions."
 			exit 1
 			;;
 	esac
 done
 
 shift $((OPTIND-1))
-if [ -z $@ ]
+if [[ -z "$@" ]];
 then
-	echo "No commit message"
+	echo "Error: No commit message provided."
+	echo "Use $(basename $0) -h for usage instructions."
 	exit 1
+else
+	print_verbose "Commit message: $@"
 fi
 
-echo "$@"
+echo "git status runs here"
+
+# ask for confirmation
+# set commit and push OK flags
+if [[ $AUTO_MODE -ne 1 ]]
+then
+	echo -e "${GREEN}[*] Continue ?${RCOL}"
+	read response
+	if [[ ${response:0:1} == "y" ]] || [[ ${response:0:1} == "Y" ]]
+	then
+		COMMIT_OK=1
+	fi
+	if [[ ${response:1:2} == "p" ]] || [[ ${response:1:2} == "P" ]]
+	then
+		PUSH_OK=1
+	fi
+fi
+
+# if COMMIT_OK is 0, no use taking this any further
+# time to end things
+if [[ $COMMIT_OK == 0 ]]
+then
+	echo "Aborting"
+	exit 0
+fi
+
+# add and commit
+if [[ $AUTO_MODE == 1 ]] || [[ $COMMIT_OK == 1 ]]
+then
+	echo "Adding and committing"
+fi
+
+# if asked to, push
+if [[ $PUSH_OK == 1 ]]
+then
+	echo "Pushing"
+fi
 
 #git status
 #echo -e "${GREEN}[*] Continue ?${RCOL}"
