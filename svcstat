@@ -3,7 +3,7 @@
 A simple script combining systemctl commands I use often.
 '
 
-services=(httpd mysqld mssql-server mongodb docker tor ModemManager i8kmon)
+services=(httpd mysqld mssql-server mongodb docker bluetooth tor ModemManager i8kmon)
 
 GREEN='\033[1;32m'
 RCOL='\033[0m'
