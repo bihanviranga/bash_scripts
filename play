@@ -6,8 +6,15 @@ it searches the Albums folder,
 and then the whole PLAYLIST_ROOT, and plays anything that contains the keyword.
 '
 
-# Constants
-PLAYLIST_ROOT="/mnt/b/music/"
+# The path to the music directory should be saved in
+# an environment variable PLAYLIST_ROOT
+# The script will exit with code 1 if the variable is not set
+PLAYLIST_ROOT=${PLAYLIST_ROOT}
+if [ -z "$PLAYLIST_ROOT" ]
+then
+	echo "PLAYLIST_ROOT not set. Please set it to point to the music directory"
+	exit 1
+fi
 
 # If no argument is given
 if [ -z "$1" ]
@@ -41,7 +48,7 @@ else
 			cmdstr+=" '$filename'"
 		done
 		unset IFS
-	else 
+	else
 		echo "Albums for keyword $1 found. Playing.."
 	fi
 
