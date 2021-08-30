@@ -30,7 +30,10 @@ $ gitdo -par upstream "Commit message here"
 
 Usage: `play [keyword]`
 
-A root music directory is set in the script. When invoked, the script checks the music directory and tries to find a playlist (.xspf extension) and opens it in vlc. If no playlist is found it checks the Albums folder and finds any album with the given keyword and play those in vlc. If no albums are found, it searches the whole music directory, including song/artist names and adds everything that contains the keyword and plays it in vlc.
+When invoked, the script checks the music directory and tries to find a playlist (.xspf extension) and opens it in vlc. If no playlist is found it checks the Albums folder and finds any album with the given keyword and play those in vlc. If no albums are found, it searches the whole music directory, including song/artist names and adds everything that contains the keyword and plays it in vlc.
+
+The root music directory should be set as an environment variable PLAYLIST_ROOT.
+`export PLAYLIST_ROOT="/path/to/music"`
 </details>
 
 <details>
