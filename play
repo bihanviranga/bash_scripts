@@ -9,7 +9,6 @@ and then the whole PLAYLIST_ROOT, and plays anything that contains the keyword.
 # The path to the music directory should be saved in
 # an environment variable PLAYLIST_ROOT
 # The script will exit with code 1 if the variable is not set
-PLAYLIST_ROOT=${PLAYLIST_ROOT}
 if [ -z "$PLAYLIST_ROOT" ]
 then
 	echo "PLAYLIST_ROOT not set. Please set it to point to the music directory"
@@ -26,40 +25,55 @@ elif [ -f "$PLAYLIST_ROOT$1.xspf" ]
 then
 	echo "Playing playlist $1.."
 	vlc "$PLAYLIST_ROOT$1.xspf" &
-# Otherwise, try the albums directory
+# Otherwise, try searching for directories
 else
-	cmdstr="vlc -Z"
 	IFS=$'\n'
-	for filename in $(find "$PLAYLIST_ROOT/Albums" -maxdepth 1 -iname "*$1*");
-	do
-		cmdstr+=" '$filename'"
-	done
-	unset IFS
-
-	# If cmdstr length is still equal to 6, it means no files have been found
-	# In this case, we search the entire music folder
-	cmdlen=${#cmdstr}
-	if [ "$cmdlen" -eq 6 ]
+	cmdstr="vlc -Z"
+	dirList=$(find "$PLAYLIST_ROOT" -maxdepth 1 -type d -iname "*$1*")
+	# First, look for top level directories with this name
+	if [ -n "$dirList" ]
 	then
-		echo "No album with keyword $1 found. Searching master.."
-		IFS=$'\n'
-		for filename in $(find "$PLAYLIST_ROOT" -iname "*$1*");
+		echo "Found top level directory with name. Playing.."
+		for filename in $dirList;
 		do
 			cmdstr+=" '$filename'"
 		done
 		unset IFS
+		eval "$cmdstr &"
 	else
-		echo "Albums for keyword $1 found. Playing.."
+		# Otherwise, look for albums with this name
+		albumList=$(find "$PLAYLIST_ROOT/Albums" -maxdepth 1 -type d -iname "*$1*")
+		if [ -n "$albumList" ]
+		then
+			# found albums
+			echo "Albums for keyword found. Playing.."
+			for filename in $albumList;
+			do
+				cmdstr+=" '$filename'"
+			done
+			unset IFS
+			eval "$cmdstr &"
+		else
+			# no albums - search master
+			fileList=$(find "$PLAYLIST_ROOT" -type f -iname "*$1*")
+			if [ -n "$fileList" ]
+			then
+				# Files found
+				echo "Files for keyword found. Playing.."
+				for filename in $fileList;
+				do
+					cmdstr+=" '$filename'"
+				done
+				unset IFS
+				eval "$cmdstr &"
+			else
+				# No files found
+				unset IFS
+				echo "Nothing found for keyword $1. Playing all on shuffle.."
+				cmdstr="$cmdstr $PLAYLIST_ROOT"
+				eval "$cmdstr &"
+			fi
+		fi
 	fi
-
-	# If the cmdstr length is still 6, nothing was found. Just play everything.
-	cmdlen=${#cmdstr}
-	if [ "$cmdlen" -eq 6 ]
-	then
-		echo "Nothing found for keyword $1. Playing all on shuffle.."
-		cmdstr="$cmdstr $PLAYLIST_ROOT"
-	fi
-
-	eval "$cmdstr &"
 fi
 
