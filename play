@@ -15,65 +15,74 @@ then
 	exit 1
 fi
 
+# Main command to be executed with other args
+cmdstr="vlc -Z"
+
 # If no argument is given
 if [ -z "$1" ]
 then
 	echo "No argument provided. Playing all on shuffle.."
-	vlc -Z $PLAYLIST_ROOT &
-# If a playlist with the given name exists
-elif [ -f "$PLAYLIST_ROOT$1.xspf" ]
-then
-	echo "Playing playlist $1.."
-	vlc "$PLAYLIST_ROOT$1.xspf" &
-# Otherwise, try searching for directories
-else
-	IFS=$'\n'
-	cmdstr="vlc -Z"
-	dirList=$(find "$PLAYLIST_ROOT" -maxdepth 1 -type d -iname "*$1*")
-	# First, look for top level directories with this name
-	if [ -n "$dirList" ]
-	then
-		echo "Found top level directory with name. Playing.."
-		for filename in $dirList;
-		do
-			cmdstr+=" '$filename'"
-		done
-		unset IFS
-		eval "$cmdstr &"
-	else
-		# Otherwise, look for albums with this name
-		albumList=$(find "$PLAYLIST_ROOT/Albums" -maxdepth 1 -type d -iname "*$1*")
-		if [ -n "$albumList" ]
-		then
-			# found albums
-			echo "Albums for keyword found. Playing.."
-			for filename in $albumList;
-			do
-				cmdstr+=" '$filename'"
-			done
-			unset IFS
-			eval "$cmdstr &"
-		else
-			# no albums - search master
-			fileList=$(find "$PLAYLIST_ROOT" -type f -iname "*$1*")
-			if [ -n "$fileList" ]
-			then
-				# Files found
-				echo "Files for keyword found. Playing.."
-				for filename in $fileList;
-				do
-					cmdstr+=" '$filename'"
-				done
-				unset IFS
-				eval "$cmdstr &"
-			else
-				# No files found
-				unset IFS
-				echo "Nothing found for keyword $1. Playing all on shuffle.."
-				cmdstr="$cmdstr $PLAYLIST_ROOT"
-				eval "$cmdstr &"
-			fi
-		fi
-	fi
+	eval "$cmdstr $PLAYLIST_ROOT &"
+	exit 0
 fi
 
+# If a playlist with the given name exists
+if [ -f "$PLAYLIST_ROOT$1.xspf" ]
+then
+	echo "Playing playlist $1.."
+	eval "$cmdstr $PLAYLIST_ROOT$1.xspf &"
+	exit 0
+fi
+
+# Otherwise, try searching for directories
+# Setting IFS because some filenames have spaces
+IFS=$'\n'
+
+# First, look for top level directories with this name
+dirList=$(find "$PLAYLIST_ROOT" -maxdepth 1 -type d -iname "*$1*")
+if [ -n "$dirList" ]
+then
+	echo "Found top level directory with name. Playing.."
+	for filename in $dirList;
+	do
+		cmdstr+=" '$filename'"
+	done
+	unset IFS
+	eval "$cmdstr &"
+	exit 0
+fi
+
+# Otherwise, look for albums with this name
+albumList=$(find "$PLAYLIST_ROOT/Albums" -maxdepth 1 -type d -iname "*$1*")
+if [ -n "$albumList" ]
+then
+	echo "Albums for keyword found. Playing.."
+	for filename in $albumList;
+	do
+		cmdstr+=" '$filename'"
+	done
+	unset IFS
+	eval "$cmdstr &"
+	exit 0
+fi
+
+# Else, look for files that contain this name
+fileList=$(find "$PLAYLIST_ROOT" -type f -iname "*$1*")
+if [ -n "$fileList" ]
+then
+	# Files found
+	echo "Files for keyword found. Playing.."
+	for filename in $fileList;
+	do
+		cmdstr+=" '$filename'"
+	done
+	unset IFS
+	eval "$cmdstr &"
+	exit 0
+fi
+
+# If nothing is found, play everything in root folder
+unset IFS
+echo "Nothing found for keyword $1. Playing all on shuffle.."
+eval "$cmdstr $PLAYLIST_ROOT &"
+exit 0
