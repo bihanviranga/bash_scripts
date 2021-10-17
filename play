@@ -62,8 +62,6 @@ while getopts ${optstring} arg; do
 done
 shift $((OPTIND-1))
 
-#exit 0 # TODO rmeove this
-
 # The path to the music directory should be saved in
 # an environment variable PLAYLIST_ROOT
 # The script will exit with code 1 if the variable is not set
@@ -77,7 +75,6 @@ fi
 if [ -z "$@" ]
 then
 	print_verbose "No argument provided. Playing all on shuffle.."
-	#eval "$cmdstr $PLAYLIST_ROOT &"
 	exec_player "$PLAYLIST_ROOT"
 	exit 0
 fi
@@ -101,7 +98,7 @@ cmdstr=""
 dirList=$(find "$PLAYLIST_ROOT" -maxdepth 1 -type d -iname "*$@*")
 if [ -n "$dirList" ]
 then
-	echo "Found top level directory with name. Playing.."
+	print_verbose "Found top level directory with name. Playing.."
 	for filename in $dirList;
 	do
 		cmdstr+=" '$filename'"
@@ -115,7 +112,7 @@ fi
 albumList=$(find "$PLAYLIST_ROOT/Albums" -maxdepth 1 -type d -iname "*$@*")
 if [ -n "$albumList" ]
 then
-	echo "Albums for keyword found. Playing.."
+	print_verbose "Albums for keyword found. Playing.."
 	for filename in $albumList;
 	do
 		cmdstr+=" '$filename'"
@@ -130,7 +127,7 @@ fileList=$(find "$PLAYLIST_ROOT" -type f -iname "*$@*")
 if [ -n "$fileList" ]
 then
 	# Files found
-	echo "Files for keyword found. Playing.."
+	print_verbose "Files for keyword found. Playing.."
 	for filename in $fileList;
 	do
 		cmdstr+=" '$filename'"
@@ -142,6 +139,6 @@ fi
 
 # If nothing is found, play everything in root folder
 unset IFS
-echo "Nothing found for keyword $@. Playing all on shuffle.."
+print_verbose "Nothing found for keyword $@. Playing all on shuffle.."
 exec_player "$PLAYLIST_ROOT"
 exit 0
