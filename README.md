@@ -22,7 +22,7 @@ $ gitdo -pa "Commit message here"
 # Add, commit, and push to 'upstream' without confirmation
 $ gitdo -par upstream "Commit message here"
 ```
-
+<hr>
 </details>
 
 <details>
@@ -34,14 +34,18 @@ When invoked, the script checks the music directory and tries to find a playlist
 
 The root music directory should be set as an environment variable PLAYLIST_ROOT.
 `export PLAYLIST_ROOT="/path/to/music"`
+<hr>
 </details>
 
 <details>
 <summary>svcstat</summary>
 
-Usage: `svcstat [stopall]`
+Usage: `svcstat [-oneline | -o | stopall]`
 
 Helps to monitor the status of services, specially when you start/stop them frequently. The services checked by the script are in an array, where you can add new services or remove them easily. When invoked with root permissions and the parameter 'stopall' (i.e `$ svcstat stopall`) all services in the array will be stopped.
+
+The `-o` or `-oneline` options trim the output and just show whether the service is active or not.
+<hr>
 </details>
 
 <details>
@@ -50,6 +54,7 @@ Helps to monitor the status of services, specially when you start/stop them freq
 Usage: `copy (source) (destination)`
 
 It just calls rsync. I use this when I want to copy something and see progress as well. As of now, this could have been done easier with an alias.
+<hr>
 </details>
 
 ## My setup
