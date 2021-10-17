@@ -6,6 +6,43 @@ it searches the Albums folder,
 and then the whole PLAYLIST_ROOT, and plays anything that contains the keyword.
 '
 
+function usage {
+	echo "Usage: $(basename $0) [-s] [KEYWORD]"
+	echo -e "\n"
+
+	echo "This script needs PLAYLIST_ROOT to point to the media directory."
+	echo "It checks the PLAYLIST_ROOT in the following order:"
+	echo -e "\t1) If there's a playlist (.xspf file) with the name KEYWORD, it is played."
+	echo -e "\t2) If there's a directory under PLAYLIST_ROOT/Albums with the name KEYWORD, it is played."
+	echo -e "\t3) If there's no playlist or album, it plays all songs that contain KEYWORD in their name."
+	echo -e "\n"
+
+	echo "If no KEYWORD is provided, the whole PLAYLIST_ROOT directory will be queued."
+	echo "The following options are supported:"
+	echo -e "\t-h: Print this message and exit."
+	echo -e "\t-s: Silent mode - redirect all output from vlc to /dev/null."
+	echo -e "\t-v: Verbose mode - print messages such as if a playlist/album was found."
+}
+
+# Parsing command line arguments
+optstring=":hs:"
+while getopts ${optstring} arg; do
+	case ${arg} in
+		h)
+			usage
+			exit 0
+			;;
+		s)
+			echo "-s flag detected"
+			;;
+		?)
+			echo "Unknown option: -${OPTARG}"
+			;;
+	esac
+done
+
+exit 0
+
 # The path to the music directory should be saved in
 # an environment variable PLAYLIST_ROOT
 # The script will exit with code 1 if the variable is not set
