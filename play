@@ -41,6 +41,18 @@ function exec_player {
 	eval "vlc -Z ${params} ${VLC_VARIABLE_FLAGS} &"
 }
 
+function queue_array_and_exit {
+	local -n array=$1
+	cmdstr=""
+	for filename in $array;
+	do
+		cmdstr+=" '$filename'"
+	done
+	unset IFS
+	exec_player "$cmdstr"
+	exit 0
+}
+
 # Parsing command line arguments
 optstring=":hsv"
 while getopts ${optstring} arg; do
@@ -91,21 +103,12 @@ fi
 # Setting IFS because some filenames have spaces
 IFS=$'\n'
 
-# Player command parameters
-cmdstr=""
-
 # First, look for top level directories with this name
 dirList=$(find "$PLAYLIST_ROOT" -maxdepth 1 -type d -iname "*$@*")
 if [ -n "$dirList" ]
 then
 	print_verbose "Found top level directory with name. Playing.."
-	for filename in $dirList;
-	do
-		cmdstr+=" '$filename'"
-	done
-	unset IFS
-	exec_player "$cmdstr"
-	exit 0
+	queue_array_and_exit dirList
 fi
 
 # Otherwise, look for albums with this name
@@ -113,13 +116,7 @@ albumList=$(find "$PLAYLIST_ROOT/Albums" -maxdepth 1 -type d -iname "*$@*")
 if [ -n "$albumList" ]
 then
 	print_verbose "Albums for keyword found. Playing.."
-	for filename in $albumList;
-	do
-		cmdstr+=" '$filename'"
-	done
-	unset IFS
-	exec_player "$cmdstr"
-	exit 0
+	queue_array_and_exit albumList
 fi
 
 # Else, look for files that contain this name
@@ -128,13 +125,7 @@ if [ -n "$fileList" ]
 then
 	# Files found
 	print_verbose "Files for keyword found. Playing.."
-	for filename in $fileList;
-	do
-		cmdstr+=" '$filename'"
-	done
-	unset IFS
-	exec_player "$cmdstr"
-	exit 0
+	queue_array_and_exit fileList
 fi
 
 # If nothing is found, play everything in root folder
